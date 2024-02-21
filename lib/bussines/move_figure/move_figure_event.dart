@@ -20,3 +20,10 @@ class TapOnValidMove extends MoveFigureEvent {
   @override
   List<Object> get props => [moveIndex];
 }
+
+class CaptureFigure extends MoveFigureEvent {
+  late int moveIndex;
+  CaptureFigure({required this.moveIndex});
+  @override
+  List<Object> get props => [moveIndex];
+}

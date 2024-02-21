@@ -1,5 +1,6 @@
 import 'package:chessproject/datalayer/models/figures.dart';
 import 'package:chessproject/datalayer/models/square.dart';
+import 'package:chessproject/datalayer/repo/repo.dart';
 import 'package:flutter/material.dart';
 
 class ChessBoard {
@@ -40,7 +41,181 @@ class ChessBoard {
                 choosen.isWhite) {
           board[indexmaker((row + direction), column - 1)]!.isValid = true;
         }
+        if (onBoard(row + direction, column + 1) &&
+            isFigure(row + direction, column + 1) &&
+            board[indexmaker(row + direction, column + 1)]!.figure!.isWhite !=
+                choosen.isWhite) {
+          board[indexmaker((row + direction), column + 1)]!.isValid = true;
+        }
         break;
+
+      case PieceType.Rook:
+        var directions = [
+          [-1, 0],
+          [0, 1],
+          [1, 0],
+          [0, -1]
+        ];
+
+        for (var direction in directions) {
+          int i = 1;
+          while (true) {
+            int newrow = i * direction[0] + row;
+            int newcolumn = i * direction[1] + column;
+
+            if (!onBoard(newrow, newcolumn)) break;
+
+            if (isFigure(newrow, newcolumn)) {
+              if (board[indexmaker(newrow, newcolumn)]!.figure!.isWhite !=
+                  choosen.isWhite) {
+                board[indexmaker(newrow, newcolumn)]!.isValid = true;
+              }
+              break;
+            }
+            board[indexmaker(newrow, newcolumn)]!.isValid = true;
+            i++;
+          }
+        }
+
+        break;
+      case PieceType.King:
+        {
+          var directions = [
+            [-1, 0],
+            [0, 1],
+            [1, 0],
+            [0, -1],
+            [-1, 1],
+            [1, 1],
+            [1, -1],
+            [-1, -1]
+          ];
+          for (var direction in directions) {
+            int newrow = direction[0] + row;
+            int newcolumn = direction[1] + column;
+
+            if (!onBoard(newrow, newcolumn)) {
+              continue;
+            }
+
+            if (isFigure(newrow, newcolumn)) {
+              if (board[indexmaker(newrow, newcolumn)]!.figure!.isWhite !=
+                  choosen.isWhite) {
+                board[indexmaker(newrow, newcolumn)]!.isValid = true;
+              }
+              continue;
+            }
+
+            board[indexmaker(newrow, newcolumn)]!.isValid = true;
+          }
+
+          break;
+        }
+
+      case PieceType.Queen:
+        {
+          var directions = [
+            [-1, 0],
+            [0, 1],
+            [1, 0],
+            [0, -1],
+            [-1, 1],
+            [1, 1],
+            [1, -1],
+            [-1, -1]
+          ];
+          for (var direction in directions) {
+            int i = 1;
+            while (true) {
+              int newrow = i * direction[0] + row;
+              int newcolumn = i * direction[1] + column;
+
+              if (!onBoard(newrow, newcolumn)) {
+                break;
+              }
+
+              if (isFigure(newrow, newcolumn)) {
+                if (board[indexmaker(newrow, newcolumn)]!.figure!.isWhite !=
+                    choosen.isWhite) {
+                  board[indexmaker(newrow, newcolumn)]!.isValid = true;
+                }
+                break;
+              }
+
+              board[indexmaker(newrow, newcolumn)]!.isValid = true;
+              i++;
+            }
+          }
+
+          break;
+        }
+
+      case PieceType.Knight:
+        {
+          var directions = [
+            [2, 1],
+            [-2, 1],
+            [2, -1],
+            [-2, -1],
+            [1, 2],
+            [-1, 2],
+            [1, -2],
+            [-1, -2],
+          ];
+
+          for (var direction in directions) {
+            int newrow = direction[0] + row;
+            int newcolumn = direction[1] + column;
+
+            if (!onBoard(newrow, newcolumn)) {
+              continue;
+            }
+
+            if (isFigure(newrow, newcolumn)) {
+              if (board[indexmaker(newrow, newcolumn)]!.figure!.isWhite !=
+                  choosen.isWhite) {
+                board[indexmaker(newrow, newcolumn)]!.isValid = true;
+              }
+              continue;
+            }
+
+            board[indexmaker(newrow, newcolumn)]!.isValid = true;
+          }
+          break;
+        }
+      case PieceType.Bishop:
+        {
+          var directions = [
+            [-1, 1],
+            [1, 1],
+            [1, -1],
+            [-1, -1]
+          ];
+
+          for (var direction in directions) {
+            int i = 1;
+            while (true) {
+              int newrow = i * direction[0] + row;
+              int newcolumn = i * direction[1] + column;
+
+              if (!onBoard(newrow, newcolumn)) {
+                break;
+              }
+
+              if (isFigure(newrow, newcolumn)) {
+                if (board[indexmaker(newrow, newcolumn)]!.figure!.isWhite !=
+                    choosen.isWhite) {
+                  board[indexmaker(newrow, newcolumn)]!.isValid = true;
+                }
+                break;
+              }
+
+              board[indexmaker(newrow, newcolumn)]!.isValid = true;
+              i++;
+            }
+          }
+          break;
+        }
       default:
     }
   }
