@@ -1,21 +1,32 @@
+import 'package:chessproject/bussines/Game_managment/game_managment_bloc.dart';
+import 'package:chessproject/datalayer/models/board.dart';
 import 'package:chessproject/presentation/square.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ChessBoard extends StatelessWidget {
-  const ChessBoard({super.key});
+class ChessBoardWidget extends StatelessWidget {
+  ChessBoardWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 600,
-      height: 600,
       child: GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
         gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 8),
+            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 8),
         itemCount: 64,
         itemBuilder: (context, index) {
-          return Square(
-            isWhite: index ~/ 8 % 2 == 0 ? index % 2 == 0 : !(index % 2 == 0),
+          return BlocBuilder<GameManagmentBloc, GameManagmentState>(
+            builder: (context, state) {
+              return SquareWidget(
+                square: context
+                    .read<GameManagmentBloc>()!
+                    .chessGame
+                    .board!
+                    .board[index],
+                index: index,
+              );
+            },
           );
         },
       ),
