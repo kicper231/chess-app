@@ -17,5 +17,12 @@ class StartMoving extends MoveFigureState {
 }
 
 class EndMoving extends MoveFigureState {
-  EndMoving({required super.isWhiteTurn});
+  bool isCheck;
+  ChessPiece? figure;
+  bool isCheckmate;
+  EndMoving(
+      {required super.isWhiteTurn,
+      this.figure,
+      required this.isCheck,
+      required this.isCheckmate});
 }

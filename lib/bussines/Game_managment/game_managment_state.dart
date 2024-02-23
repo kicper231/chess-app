@@ -17,7 +17,8 @@ final class GameManagmentSettings extends GameManagmentState {
 }
 
 final class GameManagmentOnGoing extends GameManagmentState {
-  GameManagmentOnGoing();
+  Game chessGame;
+  GameManagmentOnGoing({required this.chessGame});
 
   @override
   List<Object> get props => [identityHashCode(this)];

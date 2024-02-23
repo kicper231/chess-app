@@ -17,7 +17,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider(
-      create: (context) => Game(isWhiteMove: true),
+      create: (context) => Game(isWhiteMove: true, whiteKing: 60, blackKing: 4),
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
@@ -29,9 +29,9 @@ class MainApp extends StatelessWidget {
                 MoveFigureBloc(chessGame: context.read<Game>()),
           ),
         ],
-        child: const MaterialApp(
+        child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: HomePage(),
+          home: SizedBox(child: HomePage()),
         ),
       ),
     );

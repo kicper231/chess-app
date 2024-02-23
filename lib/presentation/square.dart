@@ -9,7 +9,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SquareWidget extends StatelessWidget {
   Square? square;
   int index;
-  SquareWidget({super.key, required this.square, required this.index});
+  bool isCheck;
+  SquareWidget(
+      {super.key,
+      required this.square,
+      required this.index,
+      required this.isCheck});
   Color? squareColor;
 
   @override
@@ -54,11 +59,29 @@ class SquareWidget extends StatelessWidget {
                 ? Padding(
                     padding: const EdgeInsets.all(1.0),
                     child: !square!.isValid
-                        ? Image.asset(
-                            square!.figure!.image,
-                            color: square!.figure!.isWhite
-                                ? Colors.white
-                                : Colors.black,
+                        ? Stack(
+                            children: [
+                              Image.asset(
+                                square!.figure!.image,
+                                color: square!.figure!.isWhite
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                              if (square!.figure != null &&
+                                  square!.figure!.type == PieceType.King &&
+                                  isCheck)
+                                Opacity(
+                                  opacity: 0.4,
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 3,
+                                              color: Color.fromARGB(
+                                                  255, 255, 82, 82)),
+                                          //color: Colors.red,
+                                          shape: BoxShape.circle)),
+                                ),
+                            ],
                           )
                         : Stack(children: [
                             Image.asset(

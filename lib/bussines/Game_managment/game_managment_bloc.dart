@@ -17,11 +17,17 @@ class GameManagmentBloc extends Bloc<GameManagmentEvent, GameManagmentState> {
     });
 
     on<GameStartEvent>((event, emit) {
-      emit(GameManagmentOnGoing());
+      emit(GameManagmentOnGoing(chessGame: chessGame));
     });
 
     on<GameOnGoing>((event, emit) {
-      emit(GameManagmentOnGoing());
+      emit(GameManagmentOnGoing(chessGame: chessGame));
+    });
+
+    add(GameInitEvent());
+
+    on<GameEnd>((event, emit) {
+      emit(GameManagmentEnd());
     });
 
     add(GameInitEvent());

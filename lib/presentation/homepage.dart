@@ -40,7 +40,7 @@ class HomePage extends StatelessWidget {
       },
       child: Scaffold(
         body: ChessBoardWidget(),
-        backgroundColor: Color.fromARGB(255, 120, 121, 122),
+        backgroundColor: Color.fromARGB(255, 75, 75, 75),
       ),
     );
   }

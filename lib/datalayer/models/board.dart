@@ -9,9 +9,16 @@ class ChessBoard {
   ChessBoard() {
     _initboard();
   }
+  void resetvalidmoves() {
+    board.forEach((key, value) {
+      value!.isValid = false;
+    });
+  }
 
-  void validMoves(int index) {
-    ChessPiece? choosen = board[index]!.figure;
+  void validMoves(int index, bool isSimulation, bool isWhiteTurn) {
+    ChessPiece? choosen = ChessPiece(
+        type: board[index]!.figure!.type,
+        isWhite: board[index]!.figure!.isWhite);
     int direction = choosen!.isWhite ? -1 : 1;
 
     int row = index ~/ 8;
@@ -218,6 +225,41 @@ class ChessBoard {
         }
       default:
     }
+    List<int> novalid = [];
+    if (!isSimulation) {
+      board.forEach((key, value) {
+        if (value!.isValid == true) {
+          ChessPiece? copy = null;
+          if (value.figure != null) {
+            copy = ChessPiece(
+                type: value!.figure!.type, isWhite: value!.figure!.isWhite);
+          }
+          ChessPiece? copy2 = null;
+          if (choosen != null) {
+            copy2 = ChessPiece(type: choosen.type, isWhite: choosen!.isWhite);
+          }
+
+          value.figure = copy2;
+          board[index]!.figure = null;
+
+          bool good = true;
+          resetvalidmoves();
+          if (kingCheck(isWhiteTurn)) {
+            good = false;
+          }
+
+          board[index]!.figure = copy2;
+          value!.figure = copy;
+          validMoves(index, true, isWhiteTurn);
+
+          if (!good) novalid.add(key);
+        }
+      });
+
+      novalid.forEach((element) {
+        board[element]!.isValid = false;
+      });
+    }
   }
 
   void _initboard() {
@@ -252,6 +294,35 @@ class ChessBoard {
     }
   }
 
+  bool kingCheck(bool isWhite) {
+    ChessPiece king;
+    int kingi = 0;
+    bool isCheck = false;
+    board.forEach((key, value) {
+      if (value!.figure != null &&
+          value!.figure!.type == PieceType.King &&
+          value.figure!.isWhite == isWhite) {
+        king = value.figure!;
+        kingi = key;
+      }
+    });
+
+    board.forEach((key, value) {
+      if (value!.figure != null && value!.figure!.isWhite != isWhite) {
+        validMoves(key, true, isWhite);
+        board.forEach((key, value) {
+          if (key == kingi && value!.isValid) {
+            isCheck = true;
+          }
+        });
+      }
+    });
+    board.forEach((key, value) {
+      value!.isValid = false;
+    });
+    return isCheck;
+  }
+
   bool onBoard(int row, int column) {
     if (row < 8 && row >= 0 && column < 8 && column >= 0) return true;
     return false;
@@ -259,6 +330,23 @@ class ChessBoard {
 
   int indexmaker(int row, int column) {
     return row * 8 + column;
+  }
+
+  bool isCheckMate(bool isWhite) {
+    bool isCheckmate = true;
+    board.forEach((key, value) {
+      if (value!.figure != null && value!.figure!.isWhite == isWhite) {
+        validMoves(key, false, false);
+        board.forEach((key, value) {
+          if (value!.isValid == true) {
+            isCheckmate = false;
+          }
+        });
+      }
+    });
+
+    resetvalidmoves();
+    return isCheckmate;
   }
 
   bool isFigure(int row, int column) {

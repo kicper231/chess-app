@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:chessproject/datalayer/models/board.dart';
 import 'package:chessproject/datalayer/models/figures.dart';
 import 'package:chessproject/datalayer/repo/repo.dart';
 import 'package:equatable/equatable.dart';
@@ -18,7 +19,8 @@ class MoveFigureBloc extends Bloc<MoveFigureEvent, MoveFigureState> {
       if (chessGame.choosenSquare != null) {
         chessGame.choosenSquare!.isChoose = false;
       }
-      chessGame.board?.validMoves(event.pieceIndex);
+      chessGame.board
+          ?.validMoves(event.pieceIndex, false, chessGame.isWhiteMove);
       chessGame.choosenSquare = chessGame.board!.board[event.pieceIndex];
 
       chessGame.board!.board[event.pieceIndex]!.isChoose = true;
@@ -26,24 +28,36 @@ class MoveFigureBloc extends Bloc<MoveFigureEvent, MoveFigureState> {
     });
 
     on<TapOnValidMove>((event, emit) {
+      //zresetowanie wszystkich valid ruchow (raczej powinno byc w logice valid)
       chessGame.board!.board.forEach((key, value) {
         value!.isValid = false;
       });
       if (chessGame.choosenSquare != null) {
         chessGame.choosenSquare!.isChoose = false;
       }
+      // zmiana tury i przypisanie figury do pola wybranego
       chessGame.board!.board[event.moveIndex]!.figure =
           chessGame.choosenSquare!.figure;
       chessGame.choosenSquare!.figure = null;
       chessGame.isWhiteMove = !chessGame.isWhiteMove;
-      emit(EndMoving(isWhiteTurn: chessGame.isWhiteMove));
+
+      //emitowanie stanu
+      emit(EndMoving(
+          isWhiteTurn: chessGame.isWhiteMove,
+          isCheck: chessGame.board!.kingCheck(chessGame.isWhiteMove),
+          isCheckmate: chessGame.board!.isCheckMate(chessGame.isWhiteMove)));
     });
 
     on<CaptureFigure>((event, emit) {
       chessGame.board!.board.forEach((key, value) {
         value!.isValid = false;
       });
-
+      ChessPiece? deadfigure;
+      if (chessGame.board!.board[event.moveIndex]?.figure != null) {
+        deadfigure = ChessPiece(
+            type: chessGame.board!.board[event.moveIndex]!.figure!.type,
+            isWhite: chessGame.board!.board[event.moveIndex]!.figure!.isWhite);
+      }
       chessGame.board!.board[event.moveIndex]!.figure =
           chessGame.choosenSquare!.figure;
 
@@ -58,7 +72,13 @@ class MoveFigureBloc extends Bloc<MoveFigureEvent, MoveFigureState> {
       // chessGame.choosenSquare = null;
       // zresetowania valid moves
 
-      emit(EndMoving(isWhiteTurn: chessGame.isWhiteMove));
+      emit(
+        EndMoving(
+            isWhiteTurn: chessGame.isWhiteMove,
+            figure: deadfigure,
+            isCheck: chessGame.board!.kingCheck(chessGame.isWhiteMove),
+            isCheckmate: chessGame.board!.isCheckMate(chessGame.isWhiteMove)),
+      );
     });
   }
 }

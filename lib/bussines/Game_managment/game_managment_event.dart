@@ -11,3 +11,5 @@ class GameInitEvent extends GameManagmentEvent {}
 class GameStartEvent extends GameManagmentEvent {}
 
 class GameOnGoing extends GameManagmentEvent {}
+
+class GameEnd extends GameManagmentEvent {}
