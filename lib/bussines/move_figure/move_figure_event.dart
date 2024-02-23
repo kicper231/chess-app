@@ -27,3 +27,8 @@ class CaptureFigure extends MoveFigureEvent {
   @override
   List<Object> get props => [moveIndex];
 }
+
+class ResetMoves extends MoveFigureEvent {
+  @override
+  List<Object> get props => [];
+}

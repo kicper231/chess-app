@@ -21,6 +21,7 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
   List<ChessPiece?> blacktaken = [];
   bool isCheckMate = false;
   bool isCheck = false;
+  bool isWhiteMove = true;
   Widget build(BuildContext context) {
     double widthscreen = MediaQuery.of(context).size.width;
     double heightscreen = MediaQuery.of(context).size.height;
@@ -38,11 +39,42 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
             }
             isCheck = state.isCheck;
             isCheckMate = state.isCheckmate;
+            isWhiteMove = state.isWhiteTurn;
             if (state.isCheckmate == true) {
               context.read<GameManagmentBloc>().add(GameEnd());
             }
+
+            if (isCheckMate) {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return SimpleDialog(
+                      title: isWhiteMove
+                          ? const Text("BLACK WIN")
+                          : const Text("WHITE WIN"),
+                      children: <Widget>[
+                        SimpleDialogOption(
+                          onPressed: () {
+                            context
+                                .read<GameManagmentBloc>()
+                                .add(GameStartEvent());
+                            context.read<MoveFigureBloc>().add(ResetMoves());
+                            Navigator.pop(context);
+                            setState(() {
+                              isCheck = false;
+                              isCheckMate = false;
+                              whitetaken = [];
+                              blacktaken = [];
+                            });
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            }
           });
         }
+        if (state is GameOnGoing) {}
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -138,7 +170,6 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
             ),
           ),
           isCheck ? Text("Check!") : Text("Check NO !"),
-          if (isCheckMate) const Text("checkmate!"),
         ],
       ),
     );

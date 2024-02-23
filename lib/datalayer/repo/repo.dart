@@ -8,6 +8,7 @@ class Game {
   int whiteKing;
   int blackKing;
   bool isCheck = false;
+
   //ChessBoard chessBoard;
   //final Player player1;
   // final Player player2;
@@ -18,5 +19,12 @@ class Game {
       required this.whiteKing,
       required this.blackKing}) {
     board = ChessBoard();
+  }
+
+  void start() {
+    board = ChessBoard();
+    choosenSquare = null;
+    isWhiteMove = true;
+    isCheck = false;
   }
 }

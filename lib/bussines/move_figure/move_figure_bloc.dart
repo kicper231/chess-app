@@ -80,5 +80,11 @@ class MoveFigureBloc extends Bloc<MoveFigureEvent, MoveFigureState> {
             isCheckmate: chessGame.board!.isCheckMate(chessGame.isWhiteMove)),
       );
     });
+
+    on<ResetMoves>(
+      (event, emit) {
+        emit(StartMoving(isWhiteTurn: chessGame.isWhiteMove));
+      },
+    );
   }
 }

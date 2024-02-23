@@ -17,6 +17,7 @@ class GameManagmentBloc extends Bloc<GameManagmentEvent, GameManagmentState> {
     });
 
     on<GameStartEvent>((event, emit) {
+      chessGame.start();
       emit(GameManagmentOnGoing(chessGame: chessGame));
     });
 
