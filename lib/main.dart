@@ -29,7 +29,8 @@ class MainApp extends StatelessWidget {
                 MoveFigureBloc(chessGame: context.read<Game>()),
           ),
         ],
-        child: MaterialApp(
+        child: const MaterialApp(
+          //color: Color.fromARGB(255, 116, 37, 37),
           debugShowCheckedModeBanner: false,
           home: SizedBox(child: HomePage()),
         ),

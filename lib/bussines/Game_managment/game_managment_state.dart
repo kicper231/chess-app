@@ -1,30 +1,42 @@
 part of 'game_managment_bloc.dart';
 
 abstract class GameManagmentState extends Equatable {
-  GameManagmentState();
+  const GameManagmentState();
 }
 
-final class GameManagmentInitial extends GameManagmentState {
+class GameManagmentInitial extends GameManagmentState {
   @override
   List<Object> get props => [];
 }
 
-final class GameManagmentSettings extends GameManagmentState {
-  GameManagmentSettings();
+class GameManagmentSettings extends GameManagmentState {
+   Game chessGame;
+   GameManagmentSettings({required this.chessGame});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [chessGame];
 }
 
-final class GameManagmentOnGoing extends GameManagmentState {
-  Game chessGame;
-  GameManagmentOnGoing({required this.chessGame});
+class GameManagmentOnGoing extends GameManagmentState {
+   Game chessGame;
+   GameManagmentOnGoing({required this.chessGame});
 
   @override
   List<Object> get props => [identityHashCode(this)];
 }
 
-final class GameManagmentEnd extends GameManagmentState {
+class GameManagmentEnd extends GameManagmentState {
+   bool isWhiteTurn;
+   GameManagmentEnd({required this.isWhiteTurn});
+
   @override
   List<Object> get props => [];
+}
+
+class GameManagmentTimer extends GameManagmentState {
+   Game chessGame;
+   GameManagmentTimer({required this.chessGame});
+
+  @override
+  List<Object> get props => [identityHashCode(this)];
 }

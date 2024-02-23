@@ -2,14 +2,14 @@ import 'package:chessproject/bussines/Game_managment/game_managment_bloc.dart';
 import 'package:chessproject/bussines/move_figure/move_figure_bloc.dart';
 import 'package:chessproject/datalayer/models/figures.dart';
 import 'package:chessproject/datalayer/models/square.dart';
-import 'package:chessproject/datalayer/repo/repo.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SquareWidget extends StatefulWidget {
-  Square? square;
-  int index;
-  bool isCheck;
+  final Square? square;
+  final int index;
+  final bool isCheck;
 
   SquareWidget(
       {super.key,
@@ -42,12 +42,24 @@ class _SquareWidgetState extends State<SquareWidget> {
       }
     }
 
-    return BlocListener<MoveFigureBloc, MoveFigureState>(
-      listener: (context, state) {
-        setState(() {
-          isWHiteTurn = state.isWhiteTurn;
-        });
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<GameManagmentBloc, GameManagmentState>(
+            listener: (context, state) {
+          if (state is GameManagmentEnd) {
+            setState(() {
+              isWHiteTurn = true;
+            });
+          }
+        }),
+        BlocListener<MoveFigureBloc, MoveFigureState>(
+          listener: (context, state) {
+            setState(() {
+              isWHiteTurn = state.isWhiteTurn;
+            });
+          },
+        ),
+      ],
       child: GestureDetector(
         onLongPress: () {
           onTapAction(context);
@@ -58,9 +70,14 @@ class _SquareWidgetState extends State<SquareWidget> {
         child: widget.square!.figure != null &&
                 widget.square!.figure!.isWhite == isWHiteTurn
             ? Draggable<ChessPiece>(
+                onDragStarted: () {
+                  onTapAction(context);
+                },
                 feedback: chessImage(),
                 data: widget.square!.figure,
-                childWhenDragging: const SizedBox.shrink(),
+                childWhenDragging: Container(
+                  color: squareColor,
+                ),
                 child: squareLook(),
               )
             : squareLook(),
@@ -110,6 +127,7 @@ class _SquareWidgetState extends State<SquareWidget> {
                         chessImage(),
                         if (widget.square!.figure != null &&
                             widget.square!.figure!.type == PieceType.King &&
+                            widget.square!.figure!.isWhite == isWHiteTurn &&
                             widget.isCheck)
                           Opacity(
                             opacity: 0.4,

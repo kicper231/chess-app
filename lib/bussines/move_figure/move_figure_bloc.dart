@@ -83,6 +83,7 @@ class MoveFigureBloc extends Bloc<MoveFigureEvent, MoveFigureState> {
 
     on<ResetMoves>(
       (event, emit) {
+        //chessGame.start();
         emit(StartMoving(isWhiteTurn: chessGame.isWhiteMove));
       },
     );

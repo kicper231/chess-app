@@ -8,8 +8,15 @@ abstract class GameManagmentEvent extends Equatable {
 
 class GameInitEvent extends GameManagmentEvent {}
 
-class GameStartEvent extends GameManagmentEvent {}
+class GameStartEvent extends GameManagmentEvent {
+  int length;
+  GameStartEvent({required this.length});
+}
 
 class GameOnGoing extends GameManagmentEvent {}
 
 class GameEnd extends GameManagmentEvent {}
+
+class WhiteTimeOut extends GameManagmentEvent {}
+
+class BlackTimeOut extends GameManagmentEvent {}
