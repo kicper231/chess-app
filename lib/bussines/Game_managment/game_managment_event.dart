@@ -9,8 +9,8 @@ abstract class GameManagmentEvent extends Equatable {
 class GameInitEvent extends GameManagmentEvent {}
 
 class GameStartEvent extends GameManagmentEvent {
-  int length;
-  GameStartEvent({required this.length});
+  final int length;
+  const GameStartEvent({required this.length});
 }
 
 class GameOnGoing extends GameManagmentEvent {}

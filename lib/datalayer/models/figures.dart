@@ -1,3 +1,4 @@
+// ignore: constant_identifier_names
 enum PieceType { Pawn, Rook, Knight, Bishop, King, Queen }
 
 abstract class Piece {

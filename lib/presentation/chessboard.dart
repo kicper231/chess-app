@@ -10,14 +10,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class ChessBoardWidget extends StatefulWidget {
-  ChessBoardWidget({super.key});
+  const ChessBoardWidget({super.key});
 
   @override
   State<ChessBoardWidget> createState() => _ChessBoardWidgetState();
 }
 
 class _ChessBoardWidgetState extends State<ChessBoardWidget> {
-  @override
   List<ChessPiece?> whitetaken = [];
   List<ChessPiece?> blacktaken = [];
   late int length;
@@ -38,10 +37,11 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     double widthscreen = MediaQuery.of(context).size.width;
     double heightscreen = MediaQuery.of(context).size.height;
-
+// idk cczemu bloc lisiner nie dziala
     return BlocListener<GameManagmentBloc, GameManagmentState>(
       listener: (context, state) {
         if (state is GameManagmentTimer) {
@@ -56,6 +56,13 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
               presetMillisecond: StopWatchTimer.getMilliSecFromSecond(length),
             );
             _stopWatchTimerWhite?.onStartTimer();
+            isfirstxd = false;
+            whitetaken = [];
+            blacktaken = [];
+            isWhiteMove = true;
+            isCheck = false;
+            isCheckMate = false;
+            isfirstxb = false;
           });
         }
       },
@@ -111,7 +118,7 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
                       color: Color.fromARGB(255, 43, 41, 38),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           top: 5, left: 30, right: 5, bottom: 5),
                       child: _stopWatchTimerBlack != null
                           ? StreamBuilder<int?>(
@@ -151,11 +158,11 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
               //  color: Color.fromARGB(255, 252, 113, 8),
               height: widthscreen / 16,
               alignment: Alignment.bottomLeft,
-              padding: EdgeInsets.only(top: 0, left: 0),
+              padding: const EdgeInsets.only(top: 0, left: 0),
               child: GridView.builder(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                padding: EdgeInsets.all(0.0),
+                padding: const EdgeInsets.all(0.0),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 16,
                   mainAxisSpacing: 0,
@@ -172,50 +179,50 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
                 },
               ),
             ),
-            Container(
-              //    color: Colors.amber,
-              child: GridView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisSpacing: 0, crossAxisSpacing: 0, crossAxisCount: 8),
-                itemCount: 64,
-                itemBuilder: (context, index) {
-                  return BlocBuilder<GameManagmentBloc, GameManagmentState>(
-                      builder: (context, state) {
-                    if (state is GameManagmentOnGoing) {
-                      return SquareWidget(
-                          square: state.chessGame.board!.board[index],
-                          index: index,
-                          isCheck: isCheck);
-                    }
 
+            //    color: Colors.amber,
+            GridView.builder(
+              shrinkWrap: true,
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisSpacing: 0, crossAxisSpacing: 0, crossAxisCount: 8),
+              itemCount: 64,
+              itemBuilder: (context, index) {
+                return BlocBuilder<GameManagmentBloc, GameManagmentState>(
+                    builder: (context, state) {
+                  if (state is GameManagmentOnGoing) {
                     return SquareWidget(
-                      square: Square(
-                          figure: null,
-                          isWhite: ((index ~/ 8) % 2 == 0)
-                              ? index % 2 == 0
-                              : index % 2 != 0,
-                          isValid: false,
-                          isChoose: false,
-                          index: index),
-                      index: index,
-                      isCheck: isCheck,
-                    );
-                  });
-                },
-              ),
+                        square: state.chessGame.board!.board[index],
+                        index: index,
+                        isCheck: isCheck);
+                  }
+
+                  return SquareWidget(
+                    square: Square(
+                        figure: null,
+                        isWhite: ((index ~/ 8) % 2 == 0)
+                            ? index % 2 == 0
+                            : index % 2 != 0,
+                        isValid: false,
+                        isChoose: false,
+                        index: index),
+                    index: index,
+                    isCheck: isCheck,
+                  );
+                });
+              },
             ),
+
             Container(
               //      color: Color.fromARGB(255, 255, 77, 0),
               height: widthscreen / 16,
-              padding: EdgeInsets.only(top: 0, left: 0),
+              padding: const EdgeInsets.only(top: 0, left: 0),
               alignment: Alignment.topLeft,
               child: GridView.builder(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                padding: EdgeInsets.all(0.0),
+                padding: const EdgeInsets.all(0.0),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 16,
                   mainAxisSpacing: 0, // Zmniejsz odstęp wzdłuż głównej osi
@@ -245,7 +252,7 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
                       color: Color.fromARGB(255, 43, 41, 38),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           top: 5, left: 30, right: 5, bottom: 5),
                       child: _stopWatchTimerWhite != null
                           ? StreamBuilder<int?>(

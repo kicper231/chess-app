@@ -5,25 +5,25 @@ sealed class MoveFigureEvent extends Equatable {
 }
 
 class TapOnFigure extends MoveFigureEvent {
-  int pieceIndex;
-  Piece? tapPiece;
+  final int pieceIndex;
+  final Piece? tapPiece;
 
-  TapOnFigure({required this.pieceIndex, required this.tapPiece});
+  const TapOnFigure({required this.pieceIndex, required this.tapPiece});
   @override
   List<Object> get props => [pieceIndex];
 }
 
 class TapOnValidMove extends MoveFigureEvent {
-  late int moveIndex;
+  final int moveIndex;
 
-  TapOnValidMove({required this.moveIndex});
+  const TapOnValidMove({required this.moveIndex});
   @override
   List<Object> get props => [moveIndex];
 }
 
 class CaptureFigure extends MoveFigureEvent {
-  late int moveIndex;
-  CaptureFigure({required this.moveIndex});
+  final int moveIndex;
+  const CaptureFigure({required this.moveIndex});
   @override
   List<Object> get props => [moveIndex];
 }

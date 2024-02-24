@@ -11,7 +11,7 @@ class SquareWidget extends StatefulWidget {
   final int index;
   final bool isCheck;
 
-  SquareWidget(
+  const SquareWidget(
       {super.key,
       required this.square,
       required this.index,
@@ -33,8 +33,8 @@ class _SquareWidgetState extends State<SquareWidget> {
   Widget build(BuildContext context) {
     if (widget.square != null) {
       squareColor = widget.square!.isWhite
-          ? Color.fromARGB(255, 201, 202, 202)
-          : Color.fromARGB(255, 138, 139, 140);
+          ? const Color.fromARGB(255, 201, 202, 202)
+          : const Color.fromARGB(255, 138, 139, 140);
 
       if (widget.square!.isChoose) {
         squareColor =
@@ -64,7 +64,7 @@ class _SquareWidgetState extends State<SquareWidget> {
         onLongPress: () {
           onTapAction(context);
         },
-        onTapDown: (TapDownDetails) {
+        onTapDown: (tapDownDetails) {
           onTapAction(context);
         },
         child: widget.square!.figure != null &&
@@ -136,8 +136,8 @@ class _SquareWidgetState extends State<SquareWidget> {
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         width: 3,
-                                        color:
-                                            Color.fromARGB(255, 255, 82, 82)),
+                                        color: const Color.fromARGB(
+                                            255, 255, 82, 82)),
                                     //color: Colors.red,
                                     shape: BoxShape.circle)),
                           ),
@@ -153,8 +153,8 @@ class _SquareWidgetState extends State<SquareWidget> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       width: 3,
-                                      color:
-                                          Color.fromARGB(255, 255, 255, 255)),
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255)),
                                   //color: Colors.red,
                                   shape: BoxShape.circle)),
                         ),
@@ -170,7 +170,7 @@ class _SquareWidgetState extends State<SquareWidget> {
                     return true;
                   },
                   builder: (context, candidateData, rejectedData) => Padding(
-                      padding: EdgeInsets.all(15.0),
+                      padding: const EdgeInsets.all(15.0),
                       child: Container(
                         decoration: BoxDecoration(
                             shape: BoxShape.circle,

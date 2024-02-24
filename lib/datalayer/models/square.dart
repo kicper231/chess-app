@@ -1,12 +1,13 @@
-import 'package:equatable/equatable.dart';
 import 'package:chessproject/datalayer/models/figures.dart';
 
-class Square extends Equatable {
+class Square {
   ChessPiece? figure;
   final bool isWhite;
   bool isChoose;
   bool isValid;
   bool? isEnPessant;
+  bool? isshortCastling;
+  bool? islongCasteling;
 
   int index;
   Square({
@@ -16,7 +17,4 @@ class Square extends Equatable {
     required this.isValid,
     required this.index,
   });
-
-  @override
-  List<Object?> get props => [figure, isWhite];
 }

@@ -1,8 +1,6 @@
 import 'package:chessproject/datalayer/models/figures.dart';
 import 'package:chessproject/datalayer/models/move.dart';
 import 'package:chessproject/datalayer/models/square.dart';
-import 'package:chessproject/datalayer/repo/repo.dart';
-import 'package:flutter/material.dart';
 
 class ChessBoard {
   Map<int, Square?> board = {};
@@ -149,6 +147,27 @@ class ChessBoard {
             board[indexmaker(newrow, newcolumn)]!.isValid = true;
           }
 
+          // roszada krotka
+
+          if (board[index]!.figure!.isMoved == false &&
+              board[index + 3]!.figure?.isMoved != null &&
+              board[index + 3]!.figure?.isMoved == false &&
+              board[index + 2]?.figure == null &&
+              board[index + 1]?.figure == null) {
+            board[index + 2]?.isshortCastling = true;
+            board[index + 2]?.isValid = true;
+          }
+          // dluga
+          if (board[index]!.figure!.isMoved == false &&
+              board[index - 4]!.figure?.isMoved != null &&
+              board[index - 4]!.figure?.isMoved == false &&
+              board[index - 3]?.figure == null &&
+              board[index - 2]?.figure == null &&
+              board[index - 1]?.figure == null) {
+            board[index - 2]?.islongCasteling = true;
+            board[index - 2]?.isValid = true;
+          }
+
           break;
         }
 
@@ -270,14 +289,12 @@ class ChessBoard {
                 isMoved: value.figure!.isMoved);
           }
           ChessPiece? copy2;
-          if (choosen != null) {
-            copy2 = ChessPiece(
-                type: choosen.type,
-                isWhite: choosen.isWhite,
-                isMoved: choosen.isMoved);
 
-            value.figure = copy2;
-          }
+          copy2 = ChessPiece(
+              type: choosen.type, isWhite: choosen.isWhite, isMoved: true);
+
+          value.figure = copy2;
+
           board[index]!.figure = null;
 
           bool good = true;
@@ -285,18 +302,18 @@ class ChessBoard {
           if (kingCheck(isWhiteTurn)) {
             good = false;
           }
-
+          copy2.isMoved = choosen.isMoved;
           board[index]!.figure = copy2;
-          value!.figure = copy;
+          value.figure = copy;
           validMoves(index, true, isWhiteTurn);
 
           if (!good) novalid.add(key);
         }
       });
 
-      novalid.forEach((element) {
+      for (var element in novalid) {
         board[element]!.isValid = false;
-      });
+      }
     }
   }
 
@@ -356,14 +373,14 @@ class ChessBoard {
     bool isCheck = false;
     board.forEach((key, value) {
       if (value!.figure != null &&
-          value!.figure!.type == PieceType.King &&
+          value.figure!.type == PieceType.King &&
           value.figure!.isWhite == isWhite) {
         kingi = key;
       }
     });
 
     board.forEach((key, value) {
-      if (value!.figure != null && value!.figure!.isWhite != isWhite) {
+      if (value!.figure != null && value.figure!.isWhite != isWhite) {
         validMoves(key, true, isWhite);
         board.forEach((key, value) {
           if (key == kingi && value!.isValid) {
@@ -390,7 +407,7 @@ class ChessBoard {
   bool isCheckMate(bool isWhite) {
     bool isCheckmate = true;
     board.forEach((key, value) {
-      if (value!.figure != null && value!.figure!.isWhite == isWhite) {
+      if (value!.figure != null && value.figure!.isWhite == isWhite) {
         validMoves(key, false, false);
         board.forEach((key, value) {
           if (value!.isValid == true) {
