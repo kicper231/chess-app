@@ -147,7 +147,11 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
                                         color: Color.fromARGB(
                                             255, 130, 127, 129)));
                               })
-                          : null,
+                          : const Text('00:00',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 25,
+                                  color: Color.fromARGB(255, 130, 127, 129))),
                     ),
                     // // color: Colors.blue,
                   ),
@@ -281,7 +285,11 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
                                         color: Color.fromARGB(
                                             255, 130, 127, 129)));
                               })
-                          : null,
+                          : const Text('00:00',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 25,
+                                  color: Color.fromARGB(255, 130, 127, 129))),
                     ),
                     // // color: Colors.blue,
                   ),
