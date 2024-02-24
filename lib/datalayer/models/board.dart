@@ -1,10 +1,13 @@
 import 'package:chessproject/datalayer/models/figures.dart';
+import 'package:chessproject/datalayer/models/move.dart';
 import 'package:chessproject/datalayer/models/square.dart';
 import 'package:chessproject/datalayer/repo/repo.dart';
 import 'package:flutter/material.dart';
 
 class ChessBoard {
   Map<int, Square?> board = {};
+  Move? lastmove;
+  late List<Move> moves;
 
   ChessBoard() {
     _initboard();
@@ -18,8 +21,9 @@ class ChessBoard {
   void validMoves(int index, bool isSimulation, bool isWhiteTurn) {
     ChessPiece? choosen = ChessPiece(
         type: board[index]!.figure!.type,
-        isWhite: board[index]!.figure!.isWhite);
-    int direction = choosen!.isWhite ? -1 : 1;
+        isWhite: board[index]!.figure!.isWhite,
+        isMoved: board[index]!.figure!.isMoved);
+    int direction = choosen.isWhite ? -1 : 1;
 
     int row = index ~/ 8;
     int column = index % 8;
@@ -54,6 +58,35 @@ class ChessBoard {
                 choosen.isWhite) {
           board[indexmaker((row + direction), column + 1)]!.isValid = true;
         }
+
+        //w przelocie
+        if (onBoard(row + direction, column + 1) &&
+            isFigure(row, column + 1) &&
+            board[indexmaker(row, column)]!.figure!.type == PieceType.Pawn &&
+            board[indexmaker(row, column + 1)]!.figure!.isWhite !=
+                choosen.isWhite &&
+            board[indexmaker(row, column + 1)]!.figure!.isMoved &&
+            lastmove != null &&
+            lastmove!.from == indexmaker(row + direction * 2, column + 1) &&
+            lastmove!.to == indexmaker(row, column + 1) &&
+            lastmove!.typ == PieceType.Pawn) {
+          board[indexmaker((row + direction), column + 1)]!.isValid = true;
+          board[indexmaker((row + direction), column + 1)]!.isEnPessant = true;
+        }
+        if (onBoard(row + direction, column - 1) &&
+            isFigure(row, column - 1) &&
+            board[indexmaker(row, column)]!.figure!.type == PieceType.Pawn &&
+            board[indexmaker(row, column - 1)]!.figure!.isWhite !=
+                choosen.isWhite &&
+            board[indexmaker(row, column - 1)]!.figure!.isMoved &&
+            lastmove != null &&
+            lastmove!.from == indexmaker(row + direction * 2, column - 1) &&
+            lastmove!.to == indexmaker(row, column - 1) &&
+            lastmove!.typ == PieceType.Pawn) {
+          board[indexmaker((row + direction), column - 1)]!.isValid = true;
+          board[indexmaker((row + direction), column - 1)]!.isEnPessant = true;
+        }
+
         break;
 
       case PieceType.Rook:
@@ -229,17 +262,22 @@ class ChessBoard {
     if (!isSimulation) {
       board.forEach((key, value) {
         if (value!.isValid == true) {
-          ChessPiece? copy = null;
+          ChessPiece? copy;
           if (value.figure != null) {
             copy = ChessPiece(
-                type: value!.figure!.type, isWhite: value!.figure!.isWhite);
+                type: value.figure!.type,
+                isWhite: value.figure!.isWhite,
+                isMoved: value.figure!.isMoved);
           }
-          ChessPiece? copy2 = null;
+          ChessPiece? copy2;
           if (choosen != null) {
-            copy2 = ChessPiece(type: choosen.type, isWhite: choosen!.isWhite);
-          }
+            copy2 = ChessPiece(
+                type: choosen.type,
+                isWhite: choosen.isWhite,
+                isMoved: choosen.isMoved);
 
-          value.figure = copy2;
+            value.figure = copy2;
+          }
           board[index]!.figure = null;
 
           bool good = true;
@@ -263,46 +301,63 @@ class ChessBoard {
   }
 
   void _initboard() {
+    moves = [];
     for (int i = 0; i < 64; i++) {
       bool isWhiteSquare = ((i ~/ 8) % 2 == 0) ? i % 2 == 0 : i % 2 != 0;
-      board[i] =
-          Square(isWhite: isWhiteSquare, isChoose: false, isValid: false);
+      board[i] = Square(
+          isWhite: isWhiteSquare, isChoose: false, isValid: false, index: i);
     }
     //  black side
-    board[0]?.figure = ChessPiece(type: PieceType.Rook, isWhite: false);
-    board[7]?.figure = ChessPiece(type: PieceType.Rook, isWhite: false);
-    board[1]?.figure = ChessPiece(type: PieceType.Knight, isWhite: false);
-    board[6]?.figure = ChessPiece(type: PieceType.Knight, isWhite: false);
-    board[2]?.figure = ChessPiece(type: PieceType.Bishop, isWhite: false);
-    board[5]?.figure = ChessPiece(type: PieceType.Bishop, isWhite: false);
-    board[3]?.figure = ChessPiece(type: PieceType.Queen, isWhite: false);
-    board[4]?.figure = ChessPiece(type: PieceType.King, isWhite: false);
+    board[0]?.figure =
+        ChessPiece(type: PieceType.Rook, isWhite: false, isMoved: false);
+    board[7]?.figure =
+        ChessPiece(type: PieceType.Rook, isWhite: false, isMoved: false);
+    board[1]?.figure =
+        ChessPiece(type: PieceType.Knight, isWhite: false, isMoved: false);
+    board[6]?.figure =
+        ChessPiece(type: PieceType.Knight, isWhite: false, isMoved: false);
+    board[2]?.figure =
+        ChessPiece(type: PieceType.Bishop, isWhite: false, isMoved: false);
+    board[5]?.figure =
+        ChessPiece(type: PieceType.Bishop, isWhite: false, isMoved: false);
+    board[3]?.figure =
+        ChessPiece(type: PieceType.Queen, isWhite: false, isMoved: false);
+    board[4]?.figure =
+        ChessPiece(type: PieceType.King, isWhite: false, isMoved: false);
     for (int i = 8; i < 8 * 2; i++) {
-      board[i]?.figure = ChessPiece(type: PieceType.Pawn, isWhite: false);
+      board[i]?.figure =
+          ChessPiece(type: PieceType.Pawn, isWhite: false, isMoved: false);
     }
 
-    board[56]?.figure = ChessPiece(type: PieceType.Rook, isWhite: true);
-    board[63]?.figure = ChessPiece(type: PieceType.Rook, isWhite: true);
-    board[57]?.figure = ChessPiece(type: PieceType.Knight, isWhite: true);
-    board[62]?.figure = ChessPiece(type: PieceType.Knight, isWhite: true);
-    board[58]?.figure = ChessPiece(type: PieceType.Bishop, isWhite: true);
-    board[61]?.figure = ChessPiece(type: PieceType.Bishop, isWhite: true);
-    board[59]?.figure = ChessPiece(type: PieceType.Queen, isWhite: true);
-    board[60]?.figure = ChessPiece(type: PieceType.King, isWhite: true);
+    board[56]?.figure =
+        ChessPiece(type: PieceType.Rook, isWhite: true, isMoved: false);
+    board[63]?.figure =
+        ChessPiece(type: PieceType.Rook, isWhite: true, isMoved: false);
+    board[57]?.figure =
+        ChessPiece(type: PieceType.Knight, isWhite: true, isMoved: false);
+    board[62]?.figure =
+        ChessPiece(type: PieceType.Knight, isWhite: true, isMoved: false);
+    board[58]?.figure =
+        ChessPiece(type: PieceType.Bishop, isWhite: true, isMoved: false);
+    board[61]?.figure =
+        ChessPiece(type: PieceType.Bishop, isWhite: true, isMoved: false);
+    board[59]?.figure =
+        ChessPiece(type: PieceType.Queen, isWhite: true, isMoved: false);
+    board[60]?.figure =
+        ChessPiece(type: PieceType.King, isWhite: true, isMoved: false);
     for (int i = 48; i < 8 * 7; i++) {
-      board[i]?.figure = ChessPiece(type: PieceType.Pawn, isWhite: true);
+      board[i]?.figure =
+          ChessPiece(type: PieceType.Pawn, isWhite: true, isMoved: false);
     }
   }
 
   bool kingCheck(bool isWhite) {
-    ChessPiece king;
     int kingi = 0;
     bool isCheck = false;
     board.forEach((key, value) {
       if (value!.figure != null &&
           value!.figure!.type == PieceType.King &&
           value.figure!.isWhite == isWhite) {
-        king = value.figure!;
         kingi = key;
       }
     });

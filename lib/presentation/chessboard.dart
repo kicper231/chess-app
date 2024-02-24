@@ -7,6 +7,7 @@ import 'package:chessproject/presentation/square.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class ChessBoardWidget extends StatefulWidget {
   ChessBoardWidget({super.key});
@@ -19,11 +20,14 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
   @override
   List<ChessPiece?> whitetaken = [];
   List<ChessPiece?> blacktaken = [];
+  late int length;
+  bool isfirstxb = false;
   bool isfirstxd = false;
   bool isCheckMate = false;
   bool isCheck = false;
   bool isWhiteMove = true;
-
+  StopWatchTimer? _stopWatchTimerWhite;
+  StopWatchTimer? _stopWatchTimerBlack;
   @override
   void initState() {
     super.initState();
@@ -39,15 +43,32 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
     double heightscreen = MediaQuery.of(context).size.height;
 
     return BlocListener<GameManagmentBloc, GameManagmentState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is GameManagmentTimer) {
+          setState(() {
+            length = state.chessGame.length;
+            _stopWatchTimerWhite = StopWatchTimer(
+              mode: StopWatchMode.countDown,
+              presetMillisecond: StopWatchTimer.getMilliSecFromSecond(length),
+            );
+            _stopWatchTimerBlack = StopWatchTimer(
+              mode: StopWatchMode.countDown,
+              presetMillisecond: StopWatchTimer.getMilliSecFromSecond(length),
+            );
+            _stopWatchTimerWhite?.onStartTimer();
+          });
+        }
+      },
       child: BlocListener<MoveFigureBloc, MoveFigureState>(
         listener: (context, state) {
           if (state is EndMoving) {
             setState(() {
               if (isWhiteMove) {
-                // _stopWatchTimerWhite!.onStopTimer();
+                _stopWatchTimerBlack!.onStartTimer();
+                _stopWatchTimerWhite!.onStopTimer();
               } else {
-                //_stopWatchTimerWhite!.onStartTimer();
+                _stopWatchTimerWhite!.onStartTimer();
+                _stopWatchTimerBlack!.onStopTimer();
               }
               if (state.figure != null) {
                 if (state.figure!.isWhite) {
@@ -89,16 +110,39 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
                       //border: Border.all(width: 1),
                       color: Color.fromARGB(255, 43, 41, 38),
                     ),
-                    child: const Padding(
+                    child: Padding(
                       padding: EdgeInsets.only(
                           top: 5, left: 30, right: 5, bottom: 5),
-                      child: Text('5:00',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25,
-                              color: Color.fromARGB(255, 130, 127, 129))),
+                      child: _stopWatchTimerBlack != null
+                          ? StreamBuilder<int?>(
+                              stream: _stopWatchTimerBlack!.rawTime,
+                              initialData: 0,
+                              builder: (context, snapshot) {
+                                final value = snapshot.data;
+                                final displayTime =
+                                    StopWatchTimer.getDisplayTimeMinute(value!);
+                                final displayseconds =
+                                    StopWatchTimer.getDisplayTimeSecond(value);
+
+                                if (isfirstxb &&
+                                    displayseconds == '00' &&
+                                    displayTime == '00') {
+                                  context
+                                      .read<GameManagmentBloc>()
+                                      .add(WhiteTimeOut());
+                                } else {
+                                  isfirstxb = true;
+                                }
+                                return Text('$displayTime:$displayseconds',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 25,
+                                        color: Color.fromARGB(
+                                            255, 130, 127, 129)));
+                              })
+                          : null,
                     ),
-                    // color: Colors.blue,
+                    // // color: Colors.blue,
                   ),
                 ],
               ),
@@ -154,7 +198,8 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
                               ? index % 2 == 0
                               : index % 2 != 0,
                           isValid: false,
-                          isChoose: false),
+                          isChoose: false,
+                          index: index),
                       index: index,
                       isCheck: isCheck,
                     );
@@ -199,35 +244,38 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
                       //border: Border.all(width: 1),
                       color: Color.fromARGB(255, 43, 41, 38),
                     ),
-                    // child: Padding(
-                    //   padding: EdgeInsets.only(
-                    //       top: 5, left: 30, right: 5, bottom: 5),
-                    //   child: StreamBuilder<int?>(
-                    //       stream: _stopWatchTimerWhite!.rawTime,
-                    //       initialData: 0,
-                    //       builder: (context, snapshot) {
-                    //         final value = snapshot.data;
-                    //         final displayTime =
-                    //             StopWatchTimer.getDisplayTimeMinute(value!);
-                    //         final displayseconds =
-                    //             StopWatchTimer.getDisplayTimeSecond(value);
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: 5, left: 30, right: 5, bottom: 5),
+                      child: _stopWatchTimerWhite != null
+                          ? StreamBuilder<int?>(
+                              stream: _stopWatchTimerWhite!.rawTime,
+                              initialData: 0,
+                              builder: (context, snapshot) {
+                                final value = snapshot.data;
+                                final displayTime =
+                                    StopWatchTimer.getDisplayTimeMinute(value!);
+                                final displayseconds =
+                                    StopWatchTimer.getDisplayTimeSecond(value);
 
-                    //         if (isfirstxd &&
-                    //             displayseconds == '00' &&
-                    //             displayTime == '00') {
-                    //           context
-                    //               .read<GameManagmentBloc>()
-                    //               .add(WhiteTimeOut());
-                    //         } else {
-                    //           isfirstxd = true;
-                    //         }
-                    //         return Text('$displayTime:$displayseconds',
-                    //             style: const TextStyle(
-                    //                 fontWeight: FontWeight.bold,
-                    //                 fontSize: 25,
-                    //                 color: Color.fromARGB(255, 130, 127, 129)));
-                    //       }),
-                    // ),
+                                if (isfirstxd &&
+                                    displayseconds == '00' &&
+                                    displayTime == '00') {
+                                  context
+                                      .read<GameManagmentBloc>()
+                                      .add(WhiteTimeOut());
+                                } else {
+                                  isfirstxd = true;
+                                }
+                                return Text('$displayTime:$displayseconds',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 25,
+                                        color: Color.fromARGB(
+                                            255, 130, 127, 129)));
+                              })
+                          : null,
+                    ),
                     // // color: Colors.blue,
                   ),
                 ],

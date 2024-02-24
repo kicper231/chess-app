@@ -6,11 +6,16 @@ class Square extends Equatable {
   final bool isWhite;
   bool isChoose;
   bool isValid;
-  Square(
-      {this.figure,
-      required this.isWhite,
-      required this.isChoose,
-      required this.isValid});
+  bool? isEnPessant;
+
+  int index;
+  Square({
+    this.figure,
+    required this.isWhite,
+    required this.isChoose,
+    required this.isValid,
+    required this.index,
+  });
 
   @override
   List<Object?> get props => [figure, isWhite];

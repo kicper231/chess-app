@@ -103,6 +103,7 @@ class _SquareWidgetState extends State<SquareWidget> {
             .add(TapOnValidMove(moveIndex: widget.index));
       }
     }
+
     context.read<GameManagmentBloc>().add(GameOnGoing());
   }
 

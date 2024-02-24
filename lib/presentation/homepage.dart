@@ -2,6 +2,7 @@ import 'package:chessproject/bussines/Game_managment/game_managment_bloc.dart';
 import 'package:chessproject/presentation/chessboard.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,6 +10,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late int length;
     return BlocListener<GameManagmentBloc, GameManagmentState>(
       listener: (context, state) {
         if (state is GameManagmentSettings) {
@@ -67,7 +69,7 @@ class HomePage extends StatelessWidget {
                   Navigator.pop(context);
                   context
                       .read<GameManagmentBloc>()
-                      .add(GameStartEvent(length: 60 * 5));
+                      .add(GameStartEvent(length: 60 * 15));
                 },
                 child: const Text('15 min'),
               ),

@@ -10,10 +10,13 @@ abstract class Piece {
 }
 
 class ChessPiece extends Piece {
-  final PieceType type;
-
-  ChessPiece({required this.type, required bool isWhite})
-      : super(isWhite: isWhite, image: _getImage(type));
+  PieceType type;
+  late bool isMoved;
+  ChessPiece({
+    required this.type,
+    required bool isWhite,
+    required this.isMoved,
+  }) : super(isWhite: isWhite, image: _getImage(type));
 
   static String _getImage(PieceType type) {
     switch (type) {
